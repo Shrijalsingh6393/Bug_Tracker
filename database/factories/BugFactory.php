@@ -23,8 +23,8 @@ class BugFactory extends Factory
             'status'      => fake()->randomElement(['reported', 'in_progress', 'resolved', 'closed']),
             'priority'    => fake()->randomElement(['low', 'medium', 'high', 'urgent']),
             'severity'    => fake()->randomElement(['minor', 'major', 'critical', 'blocker']),
-            'reporter_id' => \App\Models\User::factory(),
-            'assignee_id' => fake()->boolean(70) ? \App\Models\User::factory() : null,
+            'created_by'  => \App\Models\User::factory(),
+            'assigned_to' => fake()->boolean(70) ? \App\Models\User::factory() : null,
         ];
     }
 }

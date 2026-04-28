@@ -15,22 +15,24 @@ class Task extends Model
         'description',
         'status',
         'priority',
+        'category',
+        'project',
         'deadline',
-        'reporter_id',
-        'assignee_id',
+        'created_by',
+        'assigned_to',
     ];
 
     protected $casts = [
         'deadline' => 'date',
     ];
 
-    public function reporter(): BelongsTo
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'reporter_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function assignee(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assignee_id');
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 }

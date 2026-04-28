@@ -23,8 +23,7 @@ class TaskFactory extends Factory
             'status'      => fake()->randomElement(['open', 'in_progress', 'resolved']),
             'priority'    => fake()->randomElement(['low', 'medium', 'high', 'urgent']),
             'deadline'    => fake()->boolean(80) ? fake()->dateTimeBetween('now', '+1 month') : null,
-            'reporter_id' => \App\Models\User::factory(),
-            'assignee_id' => fake()->boolean(70) ? \App\Models\User::factory() : null,
+            'assigned_to' => fake()->boolean(70) ? \App\Models\User::factory() : null,
         ];
     }
 }

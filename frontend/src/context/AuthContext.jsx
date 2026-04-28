@@ -37,10 +37,9 @@ export const AuthProvider = ({ children }) => {
     setUser(response.data.user);
   };
 
-  const register = async (name, email, password, password_confirmation) => {
-    const response = await api.post('/register', { name, email, password, password_confirmation });
-    setToken(response.data.token);
-    setUser(response.data.user);
+  const register = async (name, email, password, password_confirmation, role) => {
+    const response = await api.post('/register', { name, email, password, password_confirmation, role });
+    return response.data;
   };
 
   const logout = async () => {

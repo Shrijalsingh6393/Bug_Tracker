@@ -8,8 +8,10 @@ export default function TaskModal({ isOpen, onClose, task, onSave, users }) {
     description: '',
     priority: 'medium',
     status: 'open',
+    category: '',
+    project: '',
     deadline: '',
-    assignee_id: ''
+    assigned_to: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -21,8 +23,10 @@ export default function TaskModal({ isOpen, onClose, task, onSave, users }) {
         description: task.description,
         priority: task.priority,
         status: task.status,
+        category: task.category || '',
+        project: task.project || '',
         deadline: task.deadline ? task.deadline.split('T')[0] : '',
-        assignee_id: task.assignee_id || ''
+        assigned_to: task.assigned_to || ''
       });
     } else {
       setFormData({
@@ -30,8 +34,10 @@ export default function TaskModal({ isOpen, onClose, task, onSave, users }) {
         description: '',
         priority: 'medium',
         status: 'open',
+        category: '',
+        project: '',
         deadline: '',
-        assignee_id: ''
+        assigned_to: ''
       });
     }
   }, [task, isOpen]);
@@ -45,7 +51,7 @@ export default function TaskModal({ isOpen, onClose, task, onSave, users }) {
     
     try {
       const data = { ...formData };
-      if (!data.assignee_id) data.assignee_id = null;
+      if (!data.assigned_to) data.assigned_to = null;
       if (!data.deadline) data.deadline = null;
 
       if (task) {
@@ -107,6 +113,30 @@ export default function TaskModal({ isOpen, onClose, task, onSave, users }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Category / Module</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Authentication, UI, Database"
+                  className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  value={formData.category}
+                  onChange={e => setFormData({...formData, category: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Project / Product</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Mobile App, Admin Panel"
+                  className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  value={formData.project}
+                  onChange={e => setFormData({...formData, project: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Priority</label>
                 <select
                   className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
@@ -149,13 +179,17 @@ export default function TaskModal({ isOpen, onClose, task, onSave, users }) {
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Assign To</label>
                 <select
                   className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  value={formData.assignee_id}
-                  onChange={e => setFormData({...formData, assignee_id: e.target.value})}
+                  value={formData.assigned_to}
+                  onChange={e => setFormData({...formData, assigned_to: e.target.value})}
                 >
                   <option value="">Unassigned</option>
-                  {users.map(u => (
-                    <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
-                  ))}
+                  {users && users.length > 0 ? (
+                    users.map(u => (
+                      <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                    ))
+                  ) : (
+                    <option disabled>No validated team members found</option>
+                  )}
                 </select>
               </div>
             </div>

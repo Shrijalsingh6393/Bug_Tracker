@@ -17,21 +17,19 @@ class AuthController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role'     => ['sometimes', \Illuminate\Validation\Rule::in(['admin', 'developer', 'manager'])],
+            'role'     => ['sometimes', \Illuminate\Validation\Rule::in(['admin', 'dev', 'manager'])],
         ]);
 
         $user = User::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'     => $validated['role'] ?? 'developer',
+            'role'     => $validated['role'] ?? 'dev',
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
+            'message' => 'Registration successful! Your account is pending approval by an admin.',
             'user'  => $user,
-            'token' => $token,
         ], 201);
     }
 
@@ -47,6 +45,12 @@ class AuthController extends Controller
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        if (! $user->is_approved) {
+            throw ValidationException::withMessages([
+                'email' => ['Your account is pending approval by an admin.'],
             ]);
         }
 

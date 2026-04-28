@@ -16,8 +16,10 @@ class Bug extends Model
         'status',
         'priority',
         'severity',
-        'reporter_id',
-        'assignee_id',
+        'category',
+        'project',
+        'created_by',
+        'assigned_to',
     ];
 
     protected $casts = [
@@ -27,11 +29,11 @@ class Bug extends Model
     ];
 
     /**
-     * The user who reported this bug.
+     * The user who created this bug.
      */
-    public function reporter(): BelongsTo
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'reporter_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**
@@ -39,6 +41,6 @@ class Bug extends Model
      */
     public function assignee(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assignee_id');
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 }

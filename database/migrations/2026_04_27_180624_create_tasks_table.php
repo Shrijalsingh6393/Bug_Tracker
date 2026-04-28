@@ -18,8 +18,7 @@ return new class extends Migration
             $table->enum('status', ['open', 'in_progress', 'resolved'])->default('open');
             $table->enum('priority', ['low', 'medium', 'high', 'urgent'])->default('medium');
             $table->date('deadline')->nullable();
-            $table->foreignId('reporter_id')->constrained('users');
-            $table->foreignId('assignee_id')->nullable()->constrained('users');
+            $table->foreignId('assigned_to')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

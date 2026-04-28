@@ -14,18 +14,26 @@ class TaskController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Task::with(['reporter:id,name', 'assignee:id,name']);
+        $query = Task::with(['creator:id,name', 'assignee:id,name']);
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('priority')) {
+        if ($request->filled('priority')) {
             $query->where('priority', $request->priority);
         }
 
-        if ($request->has('assignee_id')) {
-            $query->where('assignee_id', $request->assignee_id);
+        if ($request->filled('assigned_to')) {
+            $query->where('assigned_to', $request->assigned_to);
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->filled('project')) {
+            $query->where('project', 'like', '%' . $request->project . '%');
         }
 
         $tasks = $query->latest()->paginate(15);
@@ -43,14 +51,16 @@ class TaskController extends Controller
             'description' => 'required|string',
             'priority'    => ['sometimes', Rule::in(['low', 'medium', 'high', 'urgent'])],
             'deadline'    => 'nullable|date',
-            'assignee_id' => 'nullable|exists:users,id',
+            'assigned_to' => 'nullable|exists:users,id',
+            'category'    => 'nullable|string|max:100',
+            'project'     => 'nullable|string|max:100',
         ]);
 
-        $validated['reporter_id'] = $request->user()->id;
+        $validated['created_by'] = $request->user()->id;
         $validated['status'] = 'open';
 
         $task = Task::create($validated);
-        $task->load(['reporter:id,name', 'assignee:id,name']);
+        $task->load(['creator:id,name', 'assignee:id,name']);
 
         return response()->json($task, 201);
     }
@@ -60,7 +70,7 @@ class TaskController extends Controller
      */
     public function show(Task $task): JsonResponse
     {
-        $task->load(['reporter:id,name,email', 'assignee:id,name,email']);
+        $task->load(['assignee:id,name,email']);
 
         return response()->json($task);
     }
@@ -76,11 +86,18 @@ class TaskController extends Controller
             'status'      => ['sometimes', Rule::in(['open', 'in_progress', 'resolved'])],
             'priority'    => ['sometimes', Rule::in(['low', 'medium', 'high', 'urgent'])],
             'deadline'    => 'nullable|date',
-            'assignee_id' => 'nullable|exists:users,id',
+            'assigned_to' => 'nullable|exists:users,id',
+            'category'    => 'sometimes|string|max:100',
+            'project'     => 'sometimes|string|max:100',
         ]);
 
+        $user = $request->user();
+        if ($user->role !== 'admin' && $user->role !== 'manager' && $user->id !== $task->created_by && $user->id !== $task->assigned_to) {
+            return response()->json(['message' => 'Unauthorized. Only admins, managers, creators, or assignees can update this task.'], 403);
+        }
+
         $task->update($validated);
-        $task->load(['reporter:id,name', 'assignee:id,name']);
+        $task->load(['assignee:id,name']);
 
         return response()->json($task);
     }

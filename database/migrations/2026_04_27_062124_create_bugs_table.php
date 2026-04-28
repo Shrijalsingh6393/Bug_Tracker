@@ -18,8 +18,8 @@ return new class extends Migration
             $table->enum('status', ['reported', 'in_progress', 'resolved', 'closed'])->default('reported');
             $table->enum('priority', ['low', 'medium', 'high', 'urgent'])->default('medium');
             $table->enum('severity', ['minor', 'major', 'critical', 'blocker'])->default('major');
-            $table->foreignId('reporter_id')->constrained('users');
-            $table->foreignId('assignee_id')->nullable()->constrained('users');
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('assigned_to')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

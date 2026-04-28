@@ -9,7 +9,9 @@ export default function BugModal({ isOpen, onClose, bug, onSave, users }) {
     priority: 'medium',
     severity: 'major',
     status: 'reported',
-    assignee_id: ''
+    category: '',
+    project: '',
+    assigned_to: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -22,7 +24,9 @@ export default function BugModal({ isOpen, onClose, bug, onSave, users }) {
         priority: bug.priority,
         severity: bug.severity,
         status: bug.status,
-        assignee_id: bug.assignee_id || ''
+        category: bug.category || '',
+        project: bug.project || '',
+        assigned_to: bug.assigned_to || ''
       });
     } else {
       setFormData({
@@ -31,7 +35,9 @@ export default function BugModal({ isOpen, onClose, bug, onSave, users }) {
         priority: 'medium',
         severity: 'major',
         status: 'reported',
-        assignee_id: ''
+        category: '',
+        project: '',
+        assigned_to: ''
       });
     }
   }, [bug, isOpen]);
@@ -45,7 +51,7 @@ export default function BugModal({ isOpen, onClose, bug, onSave, users }) {
     
     try {
       const data = { ...formData };
-      if (!data.assignee_id) data.assignee_id = null;
+      if (!data.assigned_to) data.assigned_to = null;
 
       if (bug) {
         await api.put(`/bugs/${bug.id}`, data);
@@ -106,6 +112,30 @@ export default function BugModal({ isOpen, onClose, bug, onSave, users }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Category / Module</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Authentication, UI, Database"
+                  className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  value={formData.category}
+                  onChange={e => setFormData({...formData, category: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Project / Product</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Mobile App, Admin Panel"
+                  className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  value={formData.project}
+                  onChange={e => setFormData({...formData, project: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Priority</label>
                 <select
                   className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
@@ -153,13 +183,17 @@ export default function BugModal({ isOpen, onClose, bug, onSave, users }) {
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Assign To</label>
                 <select
                   className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  value={formData.assignee_id}
-                  onChange={e => setFormData({...formData, assignee_id: e.target.value})}
+                  value={formData.assigned_to}
+                  onChange={e => setFormData({...formData, assigned_to: e.target.value})}
                 >
                   <option value="">Unassigned</option>
-                  {users.map(u => (
-                    <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
-                  ))}
+                  {users && users.length > 0 ? (
+                    users.map(u => (
+                      <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                    ))
+                  ) : (
+                    <option disabled>No validated team members found</option>
+                  )}
                 </select>
               </div>
             </div>
