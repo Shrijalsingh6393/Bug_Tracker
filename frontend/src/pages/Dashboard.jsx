@@ -59,7 +59,7 @@ export default function Dashboard() {
 
   const handleApprove = async (id) => {
     try {
-      await api.post(`/admin/users/${id}/approve`);
+      await api.patch(`/admin/users/${id}/approve`);
       fetchAdminUsers();
     } catch (err) {
       alert('Failed to approve user');

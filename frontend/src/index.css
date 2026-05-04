@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --font-primary: 'Plus Jakarta Sans', sans-serif;
@@ -26,7 +24,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-800 rounded-full hover:bg-slate-700 transition-colors;
+  @apply bg-slate-800 rounded-full transition-colors;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-700;
 }
 
 /* Custom Utilities */
@@ -35,7 +37,11 @@ body {
 }
 
 .glass-card {
-  @apply bg-slate-800/50 backdrop-blur-md border border-slate-700/50 hover:border-indigo-500/50 transition-all duration-300;
+  @apply bg-slate-800/50 backdrop-blur-md border border-slate-700/50 transition-all duration-300;
+}
+
+.glass-card:hover {
+  @apply border-indigo-500/50;
 }
 
 .text-gradient {
@@ -81,7 +87,11 @@ body {
 
 /* Custom Checkbox/Radio */
 input[type="checkbox"], input[type="radio"] {
-  @apply rounded border-slate-700 bg-slate-900 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-slate-900;
+  @apply rounded border-slate-700 bg-slate-900 text-indigo-500;
+}
+
+input[type="checkbox"]:focus, input[type="radio"]:focus {
+  @apply ring-indigo-500 ring-offset-slate-900;
 }
 
 /* Tooltip Simulation */

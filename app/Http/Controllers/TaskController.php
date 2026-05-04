@@ -16,6 +16,14 @@ class TaskController extends Controller
     {
         $query = Task::with(['creator:id,name', 'assignee:id,name']);
 
+        $user = $request->user();
+        if ($user && $user->role === 'developer') {
+            $query->where(function($q) use ($user) {
+                $q->where('assigned_to', $user->id)
+                  ->orWhere('created_by', $user->id);
+            });
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
